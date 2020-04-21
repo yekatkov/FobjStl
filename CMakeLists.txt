@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(FobjStl LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+
+#!!! Поменяйте ROOT
+set(ROOT ${CMAKE_CURRENT_LIST_DIR}/../FineObjects)
+include_directories(${ROOT}/FineObjects/Inc
+	${ROOT}/FineObjects/PortLayer/Inc
+	${ROOT}/FineObjects/PortLayer/Linux/Inc)
+
+link_directories(${ROOT}/X.Linux.${CMAKE_BUILD_TYPE}/x86_64)
+
+link_libraries("-Wl,--whole-archive" FineObjStaticPart "-Wl,--no-whole-archive"  FineObj dl)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_definitions(-DHAS_PTHREADS -DLINUX -DMMAP_HAS_GROWSDOWN=1 -DNO_ASSEMBLER -DUNICODE -D_AVOID_TOWCTRANS -D_CUSTOM_PLATFORM
+		-D_DEBUG -D_DLL -D_LINUX -D_MT -D_NATIVE_WCHAR_T_DEFINED -D_PLATFORM_64_BIT -D_UNICODE -D_USE_DEBUG_TIMER -D_USRDLL -D__LITTLE_ENDIAN__)
+else(CMAKE_BUILD_TYPE)
+	add_definitions( -DLINUX -DMMAP_HAS_GROWSDOWN=1 -DNDEBUG -DNO_ASSEMBLER -DUNICODE -D_AVOID_TOWCTRANS -D_CUSTOM_PLATFORM
+		-D_DLL -D_LINUX -D_MT -D_NATIVE_WCHAR_T_DEFINED -D_PLATFORM_64_BIT -D_RELEASE -D_UNICODE -D_USE_DEBUG_TIMER -D_USRDLL -D__LITTLE_ENDIAN__)
+endif(CMAKE_BUILD_TYPE)
+
+add_executable(FobjStl main.cpp)
